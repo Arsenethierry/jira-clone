@@ -9,17 +9,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-
-const formSchema = z.object({
-    email: z.string().email(),
-    password: z.string(),
-    username: z.string(),
-});
-
+import { registerSchema } from '../schemas';
+import { useRegister } from '../api/use-signup';
 
 export const SignUpCard = () => {
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const { mutate } = useRegister();
+    const form = useForm<z.infer<typeof registerSchema>>({
+        resolver: zodResolver(registerSchema),
         defaultValues: {
             email: "",
             password: "",
@@ -27,9 +23,9 @@ export const SignUpCard = () => {
         }
     });
 
-    const onSubmit = (values: z.infer<typeof formSchema>) => {
-            console.log(values)
-        }
+    const onSubmit = (values: z.infer<typeof registerSchema>) => {
+        mutate({ json: values });
+    }
     return (
         <Card className='w-full h-full md:w-[487px] border-none shadow-none space-y-6'>
             <CardHeader className='flex items-center justify-center text-center'>
@@ -45,19 +41,6 @@ export const SignUpCard = () => {
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                         <FormField
                             control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Email" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
                             name="username"
                             render={({ field }) => (
                                 <FormItem>
@@ -69,6 +52,21 @@ export const SignUpCard = () => {
                                 </FormItem>
                             )}
                         />
+
+                        <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Email</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Email" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
                         <FormField
                             control={form.control}
                             name="password"
