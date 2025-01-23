@@ -11,9 +11,10 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { loginSchema } from '../schemas';
 import { useLogin } from '../api/use-login';
+import { Loader } from 'lucide-react';
 export const SignInCard = () => {
 
-    const { mutate } = useLogin();
+    const { mutate, isPending } = useLogin();
 
     const form = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
@@ -66,14 +67,17 @@ export const SignInCard = () => {
                                 </FormItem>
                             )}
                         />
-                        <Button disabled={false} className='w-full' size={'lg'}>Login</Button>
+                        <Button disabled={isPending} className='w-full' size={'lg'}>
+                            <Loader className={isPending ? "animate-spin" : "hidden"} /> {" "}
+                            Login
+                        </Button>
                     </form>
                 </Form>
                 <div className='px-7'>
                     <DottedSeparator />
                 </div>
-                <Button variant={'outline'} className='w-full'>Log In with Google</Button>
-                <Button variant={'outline'} className='w-full'>Log In with Github</Button>
+                <Button disabled={isPending} variant={'outline'} className='w-full'>Log In with Google</Button>
+                <Button disabled={isPending} variant={'outline'} className='w-full'>Log In with Github</Button>
             </CardContent>
         </Card>
     );

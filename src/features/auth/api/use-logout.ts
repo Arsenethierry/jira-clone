@@ -1,29 +1,30 @@
 import { client } from "@/lib/rpc";
-import { useMutation } from "@tanstack/react-query";
-import { InferRequestType, InferResponseType } from "hono";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { InferResponseType } from "hono";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 type ResponseType = InferResponseType<typeof client.api.auth.login["$post"]>;
-type RequestType = InferRequestType<typeof client.api.auth.login["$post"]>;
 
-export const useLogin = () => {
+export const useLogout = () => {
+    const queryClient = useQueryClient();
     const router = useRouter();
 
     const mutate = useMutation<
         ResponseType,
-        Error,
-        RequestType
+        Error
     >({
-        mutationFn: async ({ json }) => {
-            const response = await client.api.auth.login["$post"]({ json })
+        mutationFn: async () => {
+            const response = await client.api.auth.logout["$post"]();
             return await response.json();
         },
         onSuccess: () => {
+            toast.success("User logged out")
+            queryClient.invalidateQueries({ queryKey: "currentUser" });
             router.refresh();
         },
         onError: () => {
-            toast.error("Failed to login");
+            toast.error("Something went wrong")
         }
     });
 
