@@ -8,7 +8,7 @@ interface ResponsiveModalProps {
     onOpenChange: (open: boolean) => void;
 }
 
-export const ReasponseModal = ({
+export const ResponsiveModal = ({
     children,
     onOpenChange,
     open
